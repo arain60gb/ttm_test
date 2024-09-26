@@ -8,3 +8,6 @@ librosa
 torchaudio
 scipy
 audiocraft
+transformers
+datasets
+wandb
