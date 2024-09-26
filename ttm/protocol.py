@@ -53,6 +53,7 @@ class MusicGeneration(bt.Synapse, BaseModel):
     class Config:
         """ Configuration for validation on attribute assignment and strict data handling. """
         validate_assignment = True
+        model_config['protected_namespaces'] = ()
 
     @validator('text_input')
     def text_input_not_empty(cls, value):

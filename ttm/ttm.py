@@ -219,3 +219,5 @@ class MusicGenerationService(AIModelService):
             self.combinations.append(subset)
             filtered_uids = filtered_uids[subset_length:]
         return self.combinations
+    
+        
