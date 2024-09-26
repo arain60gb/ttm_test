@@ -1,0 +1,10 @@
+pydantic
+bittensor==7.4.0
+psutil
+GPUtil
+inflect
+huggingface_hub
+librosa
+torchaudio
+scipy
+audiocraft
