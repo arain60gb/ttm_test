@@ -7,7 +7,7 @@ huggingface_hub
 librosa
 torchaudio
 scipy
-https://github.com/facebookresearch/audiocraft.git
+git+https://github.com/facebookresearch/audiocraft.git
 transformers
 datasets
 wandb
