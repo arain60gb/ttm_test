@@ -135,6 +135,8 @@ def main(config):
 
     def ProcessMusic(synapse: MusicGeneration) -> MusicGeneration:
         bt.logging.info(f"Generating music with model: {config.music_model}")
+        print(f"synapse.text_input: {synapse.text_input}")
+        print(f"synapse.duration: {synapse.duration}")
         music = ttm_models.generate_music(synapse.text_input, synapse.duration)
 
         if music is None:
