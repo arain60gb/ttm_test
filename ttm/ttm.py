@@ -67,6 +67,7 @@ class MusicGenerationService(AIModelService):
             while len(g_prompt) > 256:
                 bt.logging.error(f'The length of current Prompt is greater than 256. Skipping current prompt.')
                 g_prompt = random.choice(g_prompt)
+                print(f"____________________________TTM-Prompt randomly selected____________________________:")
                 g_prompt = self.convert_numeric_values(g_prompt)
 
             # Get filtered axons and query the network
