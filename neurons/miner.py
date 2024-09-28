@@ -8,7 +8,8 @@ import traceback
 import torchaudio
 import numpy as np
 import bittensor as bt
-from ttm.protocol import MusicGeneration
+import ttm.protocol as protocol
+# from ttm.protocol import MusicGeneration
 from scipy.io.wavfile import write as write_wav
 from transformers import AutoProcessor, MusicgenForConditionalGeneration
 
@@ -133,7 +134,7 @@ def main(config):
         except Exception as e:
             bt.logging.error(f"Error converting file: {e}")
 
-    def ProcessMusic(synapse: MusicGeneration) -> MusicGeneration:
+    def ProcessMusic(synapse: protocol.MusicGeneration) -> protocol.MusicGeneration:
         bt.logging.info(f"Generating music with model: {config.music_model}")
         print(f"synapse.text_input: {synapse.text_input}")
         print(f"synapse.duration: {synapse.duration}")
