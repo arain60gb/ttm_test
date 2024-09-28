@@ -103,6 +103,19 @@ class MusicGenerationService(AIModelService):
             timeout=200,
         )
         return responses
+    
+    def update_block(self):
+        self.current_block = self.subtensor.block
+        if self.current_block - self.last_updated_block > 120:
+            bt.logging.info(f"Updating weights. Last update was at block: {self.last_updated_block}")
+            bt.logging.info(f"Current block is for weight update is: {self.current_block}")
+            self.update_weights(self.scores)
+            self.last_updated_block = self.current_block
+        else:
+            bt.logging.info(f"Updating weights. Last update was at block:  {self.last_updated_block}")
+            bt.logging.info(f"Current block is: {self.current_block}")
+            bt.logging.info(f"Next update will be at block: {self.last_updated_block + 120}")
+            bt.logging.info(f"Skipping weight update. Last update was at block {self.last_updated_block}")
 
     def process_responses(self, filtered_axons, responses, prompt):
         """Processes responses received from the network."""
@@ -242,3 +255,50 @@ class MusicGenerationService(AIModelService):
             filtered_uids = filtered_uids[subset_length:]
         return filtered_uids #self.combinations
 
+    def update_weights(self, scores):
+        # Process scores for blacklisted miners
+        MAX_WEIGHT_UPDATE_TRY = 3
+        for idx, uid in enumerate(self.metagraph.uids):
+            neuron = self.metagraph.neurons[uid]
+            if neuron.coldkey in lib.BLACKLISTED_MINER_COLDKEYS or neuron.hotkey in lib.BLACKLISTED_MINER_HOTKEYS:
+                scores[idx] = 0.0
+                bt.logging.info(f"Blacklisted miner detected: {uid}. Score set to 0.")
+
+        # Normalize scores to get weights
+        weights = torch.nn.functional.normalize(scores, p=1, dim=0)
+        bt.logging.info(f"Setting weights: {weights}")
+
+        # Process weights for the subnet
+        try:
+            processed_uids, processed_weights = bt.utils.weight_utils.process_weights_for_netuid(
+                uids=self.metagraph.uids,
+                weights=weights,
+                netuid=self.config.netuid,
+                subtensor=self.subtensor
+            )
+            bt.logging.info(f"Processed weights: {processed_weights}")
+            bt.logging.info(f"Processed uids: {processed_uids}")
+        except Exception as e:
+            bt.logging.error(f"An error occurred While processing the weights: {e}")
+
+        try:
+            # Set weights on the Bittensor network
+            for i in range(MAX_WEIGHT_UPDATE_TRY):
+                bt.logging.info(f"Setting weights for the subnet: {self.config.netuid} with the iteration: {i+1}")
+                result = self.subtensor.set_weights(
+                    netuid=self.config.netuid,  # Subnet to set weights on
+                    wallet=self.wallet,         # Wallet to sign set weights using hotkey
+                    uids=processed_uids,        # Uids of the miners to set weights for
+                    weights=processed_weights, # Weights to set for the miners
+                    wait_for_finalization=False,
+                    wait_for_inclusion=False,
+                    version_key=self.version,
+                )
+
+            if result:
+                bt.logging.success(f'Successfully set weights. result: {result}')
+                bt.logging.info(f'META GRPAH: {self.metagraph.E.numpy()}')
+            else:
+                bt.logging.error('Failed to set weights.')
+        except Exception as e:
+            bt.logging.error(f"An error occurred while setting weights: {e}")

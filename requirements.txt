@@ -11,3 +11,4 @@ scipy
 transformers
 datasets
 wandb
+laion_clap
