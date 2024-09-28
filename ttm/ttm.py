@@ -200,7 +200,7 @@ class MusicGenerationService(AIModelService):
             bt.logging.info(f"Current Combination for TTM: [68, 69]")
             filtered_axons = [self.metagraph.axons[i] for i in [68, 69]]
 
-            print(f"____________________________ filtered axons +++++++++++++++++++++++++++++++++++ {filtered_axons} ____________________________:")
+        print(f"____________________________ filtered axons +++++++++++++++++++++++++++++++++++ {filtered_axons} ____________________________:")
 
         return filtered_axons
 
