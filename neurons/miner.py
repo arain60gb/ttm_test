@@ -200,7 +200,7 @@ def main(config):
 
         # Log any unexpected errors
         except Exception as e:
-            bt.logging.error(traceback.format_exc())
+            bt.logging.error(f"unexpected error",traceback.format_exc())
             continue
 
 # Entry point
