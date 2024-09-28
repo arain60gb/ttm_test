@@ -107,7 +107,7 @@ def main(config):
     ######################## Text to Music Processing ########################
 
     # The blacklist function decides if a request should be ignored.
-    def music_blacklist_fn(synapse: MusicGeneration) -> typing.Tuple[bool, str]:
+    def music_blacklist_fn(synapse: protocol.MusicGeneration) -> typing.Tuple[bool, str]:
         if synapse.dendrite.hotkey not in metagraph.hotkeys:
             bt.logging.trace(f"Blacklisting unrecognized hotkey {synapse.dendrite.hotkey}")
             return True, "Unrecognized hotkey"
@@ -115,7 +115,7 @@ def main(config):
             return False, "Accepted"
 
     # The priority function determines the request handling order.
-    def music_priority_fn(synapse: MusicGeneration) -> float:
+    def music_priority_fn(synapse: protocol.MusicGeneration) -> float:
         caller_uid = metagraph.hotkeys.index(synapse.dendrite.hotkey)
         priority = float(metagraph.S[caller_uid])
         bt.logging.trace(f"Prioritizing {synapse.dendrite.hotkey} with stake: {priority}")
