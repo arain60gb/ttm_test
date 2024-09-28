@@ -12,7 +12,7 @@ import random
 import torch
 import wandb
 import wave
-import ttm.ttm as ttmm
+import lib
 import sys
 import os
 
@@ -193,8 +193,8 @@ class MusicGenerationService(AIModelService):
         # Remove the weights of miners that are not queryable.
         queryable_uids = torch.Tensor(queryable_uids) * torch.Tensor([self.metagraph.neurons[uid].axon_info.ip != '0.0.0.0' for uid in uids])
         queryable_uid = queryable_uids * torch.Tensor([
-            any(self.metagraph.neurons[uid].axon_info.ip == ip for ip in ttmm.BLACKLISTED_IPS) or
-            any(self.metagraph.neurons[uid].axon_info.ip.startswith(prefix) for prefix in ttmm.BLACKLISTED_IPS_SEG)
+            any(self.metagraph.neurons[uid].axon_info.ip == ip for ip in lib.BLACKLISTED_IPS) or
+            any(self.metagraph.neurons[uid].axon_info.ip.startswith(prefix) for prefix in lib.BLACKLISTED_IPS_SEG)
             for uid in uids
         ])
         active_miners = torch.sum(queryable_uids)
