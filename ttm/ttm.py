@@ -65,15 +65,12 @@ class MusicGenerationService(AIModelService):
             g_prompt = self.convert_numeric_values(g_prompt)
             # Ensure prompt length does not exceed 256 characters
             while len(g_prompt) > 256:
-                print(f"____________________________ inside the promt ____________________________:")
                 bt.logging.error(f'The length of current Prompt is greater than 256. Skipping current prompt.')
                 g_prompt = random.choice(g_prompt)
-                print(f"____________________________TTM-Prompt randomly selected____________________________:")
                 g_prompt = self.convert_numeric_values(g_prompt)
 
             # Get filtered axons and query the network
             filtered_axons = self.get_filtered_axons_from_combinations()
-            print(f"____________________________ filtered axons {filtered_axons} ____________________________:")
             responses = self.query_network(filtered_axons, g_prompt)
             print(f"____________________________ quering network {responses} ____________________________:")
             try:
@@ -199,8 +196,6 @@ class MusicGenerationService(AIModelService):
             current_combination = self.combinations.pop(0)
             bt.logging.info(f"Current Combination for TTM: [68, 69]")
             filtered_axons = [self.metagraph.axons[i] for i in [68, 69]]
-
-        print(f"____________________________ filtered axons +++++++++++++++++++++++++++++++++++ {filtered_axons} ____________________________:")
 
         return filtered_axons
 
