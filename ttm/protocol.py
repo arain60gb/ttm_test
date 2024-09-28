@@ -28,40 +28,34 @@ class MusicGeneration(bt.Synapse, BaseModel):
     'facebook/musicgen-medium' and 'facebook/musicgen-large'. Extends bt.Synapse for seamless integration into a 
     broader neural-based generative system.
     """
-    text_input: str = Field(
-        ...,
-        title="Text Input",
-        description="Textual directives or descriptions intended to guide the music generation process."
-    )
-    model_name: Optional[Literal['facebook/musicgen-medium', 'facebook/musicgen-large']] = Field(
-        'facebook/musicgen-medium',
-        title="Model Name",
-        description="The machine learning model employed for music generation. Supported models: "
-                    "'facebook/musicgen-medium', 'facebook/musicgen-large'."
-    )
-    music_output: Optional[List[bytes]] = Field(
-        default=None,
-        title="Music Output",
-        description="The resultant music data, encoded as a list of bytes, generated from the text input."
-    )
-    
-    duration: Optional[int] = Field(
-        default=None,
-        title="Duration",
-        description="The length of the generated music piece, specified in seconds."
-    )
-
     class Config:
         """ Configuration for validation on attribute assignment and strict data handling. """
         validate_assignment = True
         protected_namespaces = ()
 
-    @validator('text_input')
-    def text_input_not_empty(cls, value):
-        """ Ensure the text input is not empty. """
-        if not value or not value.strip():
-            raise ValueError('Text input cannot be empty.')
-        return value
+        text_input: str = Field(
+            ...,
+            title="Text Input",
+            description="Textual directives or descriptions intended to guide the music generation process."
+        )
+        model_name: Optional[Literal['facebook/musicgen-medium', 'facebook/musicgen-large']] = Field(
+            'facebook/musicgen-medium',
+            title="Model Name",
+            description="The machine learning model employed for music generation. Supported models: "
+                        "'facebook/musicgen-medium', 'facebook/musicgen-large'."
+        )
+        music_output: Optional[List[bytes]] = Field(
+            default=None,
+            title="Music Output",
+            description="The resultant music data, encoded as a list of bytes, generated from the text input."
+        )
+        
+        duration: Optional[int] = Field(
+            default=None,
+            title="Duration",
+            description="The length of the generated music piece, specified in seconds."
+        )
+
 
     def deserialize(self) -> List[bytes]:
         """
