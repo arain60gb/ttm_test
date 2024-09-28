@@ -103,7 +103,7 @@ class MusicGenerationService(AIModelService):
     def process_responses(self, filtered_axons, responses, prompt):
         """Processes responses received from the network."""
         print(f"____________________________ inside the process response {filtered_axons} ____________________________:")
-        print(f"____________________________ inside the process response {responses} ____________________________:")
+        print(f"____________________________ inside the process response ye khali aa raha hai {responses} ____________________________:")
         print(f"____________________________ inside the process response {prompt} ____________________________:")
         for axon, response in zip(filtered_axons, responses):
             if response is not None and isinstance(response, MusicGeneration):
