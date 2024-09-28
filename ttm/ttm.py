@@ -58,19 +58,13 @@ class MusicGenerationService(AIModelService):
         g_prompt = None
         try:
             # Load prompt from the dataset using the load_prompts function
-
             bt.logging.info(f"Using prompt from HuggingFace Dataset for Text-To-Music at Step: {step}")
-            print(f"before load prompts")
             g_prompt = self.load_prompts()
-            print(f"after load prompts")
             g_prompt = random.choice(g_prompt)  # Choose a random prompt
-            print(f"after random choice")
             g_prompt = self.convert_numeric_values(g_prompt)
-            print(f"after convert numeric values")
 
             # Ensure prompt length does not exceed 256 characters
             while len(g_prompt) > 256:
-                print(f"Prompt length: {len(g_prompt)}")
                 bt.logging.error(f'The length of current Prompt is greater than 256. Skipping current prompt.')
                 g_prompt = random.choice(g_prompt)
                 g_prompt = self.convert_numeric_values(g_prompt)

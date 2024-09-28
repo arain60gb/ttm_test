@@ -105,15 +105,53 @@ class AIModelService:
         sys.path.insert(0, project_root)
 
     def convert_numeric_values(self, input_prompt):
-        # Regular expression to find numeric values excluding date patterns and ordinals
+        # Regular expression to identify date patterns
+        date_pattern = r'(\b\d{1,2}[/-]\d{1,2}[/-]\d{2,4}\b)|(\b\d{2,4}[/-]\d{1,2}[/-]\d{1,2}\b)'
+
+        # Regular expression to find ordinal numbers
+        ordinal_pattern = r'\b\d{1,2}(st|nd|rd|th)\b'
+
+        # Regular expression to find numeric values with and without commas, excluding those part of date patterns and ordinals
         numeric_pattern = r'\b(?<![\d,/-])(\d{1,3}(?:,\d{3})*|\d+)(?![,\d/-])(?!\d*(st|nd|rd|th))\b'
+
+        # Protect date formats from changes
+        date_matches = re.findall(date_pattern, input_prompt)
+        date_replacements = {}
+        for i, date in enumerate(date_matches):
+            placeholder = f'{{DATE{i}}}'
+            input_prompt = input_prompt.replace(date[0], placeholder)
+            date_replacements[placeholder] = date[0]
+
+        # Protect ordinal numbers from changes
+        ordinal_matches = re.findall(ordinal_pattern, input_prompt)
+        ordinal_replacements = {}
+        for i, ordinal in enumerate(ordinal_matches):
+            placeholder = f'{{ORDINAL{i}}}'
+            input_prompt = input_prompt.replace(ordinal, placeholder)
+            ordinal_replacements[placeholder] = ordinal
 
         # Convert and replace numeric values
         numeric_matches = re.findall(numeric_pattern, input_prompt)
         for match in numeric_matches:
-            numeric_value = int(match.replace(",", ""))  # Remove commas and convert to integer
+            matched_str = match if isinstance(match, str) else match[0]  # Ensure match is treated as string
+            numeric_value = int(matched_str.replace(",", ""))  # Remove commas and convert to integer
             numeric_in_words = self.p.number_to_words(numeric_value)
-            input_prompt = input_prompt.replace(match, numeric_in_words, 1)  # Replace only the first occurrence
+            input_prompt = input_prompt.replace(matched_str, numeric_in_words, 1)  # Replace only the first occurrence
+
+        # Reinsert dates into the input prompt
+        for placeholder, date_str in date_replacements.items():
+            input_prompt = input_prompt.replace(placeholder, date_str)
+
+        # Convert and reinsert ordinal numbers into the input prompt
+        for placeholder, ordinal_str in ordinal_replacements.items():
+            numeric_parts = re.findall(r'\d+', ordinal_str)
+            if numeric_parts:  # Check if there are numeric parts found
+                numeric_part = int(numeric_parts[0])  # Convert the first found numeric part to integer
+                ordinal_in_words = self.p.number_to_words(numeric_part, ordinal=True)  # Convert to ordinal words
+                input_prompt = input_prompt.replace(placeholder, ordinal_in_words)
+            else:
+                # Revert back to the original text if no numeric part is found
+                input_prompt = input_prompt.replace(placeholder, ordinal_str)
 
         return input_prompt
 
