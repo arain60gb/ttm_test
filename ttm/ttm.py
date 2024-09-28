@@ -12,6 +12,7 @@ import random
 import torch
 import wandb
 import wave
+import ttm
 import sys
 import os
 
@@ -191,11 +192,11 @@ class MusicGenerationService(AIModelService):
         queryable_uids = (self.metagraph.total_stake >= 0)
         # Remove the weights of miners that are not queryable.
         queryable_uids = queryable_uids * torch.Tensor([self.metagraph.neurons[uid].axon_info.ip != '0.0.0.0' for uid in uids])
-        # queryable_uid = queryable_uids * torch.Tensor([
-        #     any(self.metagraph.neurons[uid].axon_info.ip == ip for ip in lib.BLACKLISTED_IPS) or
-        #     any(self.metagraph.neurons[uid].axon_info.ip.startswith(prefix) for prefix in lib.BLACKLISTED_IPS_SEG)
-        #     for uid in uids
-        # ])
+        queryable_uid = queryable_uids * torch.Tensor([
+            any(self.metagraph.neurons[uid].axon_info.ip == ip for ip in ttm.BLACKLISTED_IPS) or
+            any(self.metagraph.neurons[uid].axon_info.ip.startswith(prefix) for prefix in ttm.BLACKLISTED_IPS_SEG)
+            for uid in uids
+        ])
         active_miners = torch.sum(queryable_uids)
         dendrites_per_query = self.total_dendrites_per_query
 
@@ -213,13 +214,12 @@ class MusicGenerationService(AIModelService):
                 dendrites_per_query = self.minimum_dendrites_per_query
         # zip uids and queryable_uids, filter only the uids that are queryable, unzip, and get the uids
         zipped_uids = list(zip(uids, queryable_uids))
-        # zipped_uid = list(zip(uids, queryable_uid))
+        zipped_uid = list(zip(uids, queryable_uid))
         filtered_zipped_uids = list(filter(lambda x: x[1], zipped_uids))
         filtered_uids = [item[0] for item in filtered_zipped_uids] if filtered_zipped_uids else []
-        # filtered_zipped_uid = list(filter(lambda x: x[1], zipped_uid))
-        # filtered_uid = [item[0] for item in filtered_zipped_uid] if filtered_zipped_uid else []
-        # self.filtered_axon = filtered_uid
-
+        filtered_zipped_uid = list(filter(lambda x: x[1], zipped_uid))
+        filtered_uid = [item[0] for item in filtered_zipped_uid] if filtered_zipped_uid else []
+        self.filtered_axon = filtered_uid
         subset_length = min(dendrites_per_query, len(filtered_uids))
         # Shuffle the order of members
         random.shuffle(filtered_uids)
@@ -229,5 +229,4 @@ class MusicGenerationService(AIModelService):
             self.combinations.append(subset)
             filtered_uids = filtered_uids[subset_length:]
         return self.combinations
-
 
