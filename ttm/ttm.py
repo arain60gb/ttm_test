@@ -65,7 +65,7 @@ class MusicGenerationService(AIModelService):
             print(f"____________________________TTM-Prompt selected____________________________:")
             # Ensure prompt length does not exceed 256 characters
             print(f"____________________________TTM-Prompt length____________________________: {len(g_prompt)}")
-            print(f"____________________________TTM-Prompt length____________________________: {type(g_prompt)}")
+            print(f"____________________________TTM-Prompt length____________________________: {type(len(g_prompt))}")
             print(f"____________________________ TTM-Prompt ____________________________: {g_prompt}")
 
             try:
