@@ -38,11 +38,9 @@ class MusicGeneration(bt.Synapse, BaseModel):
     )
 
 
-    def deserialize(self) -> List[bytes]:
+    def deserialize(self) -> List:
         """
         Processes and returns the music_output into a format ready for audio rendering or further analysis.
         """
-        if not self.music_output:
-            raise ValueError("No music output to deserialize.")
-        return self.music_output
+        return self
     
