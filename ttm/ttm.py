@@ -81,7 +81,7 @@ class MusicGenerationService(AIModelService):
             print(f"____________________________ after while loop ____________________________:")
             # Get filtered axons and query the network
             filtered_axons = self.get_filtered_axons_from_combinations()
-            bt.logging.info(f"______________TTM-Prompt______________: {g_prompt}")
+            print(f"____________________________ after get_filtered_axons_from_combinations loop ____________________________:")
             responses = self.query_network(filtered_axons, g_prompt)
             self.process_responses(filtered_axons, responses, g_prompt)
 
