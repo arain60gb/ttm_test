@@ -19,7 +19,7 @@
 
 import bittensor as bt
 from typing import List, Optional, Literal
-from pydantic import BaseModel, Field, Any
+from pydantic import BaseModel, Field
 
 
 class MusicGeneration(bt.Synapse, BaseModel):
