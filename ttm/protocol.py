@@ -44,10 +44,11 @@ class MusicGeneration(bt.Synapse, BaseModel):
         title="Music Output",
         description="The resultant music data, encoded as a list of bytes, generated from the text input."
     )
-    duration: conint(gt=0) = Field(
-        ...,
+    
+    duration: Optional[int] = Field(
+        default=None,
         title="Duration",
-        description="The length of the generated music piece, specified in seconds. Must be greater than zero."
+        description="The length of the generated music piece, specified in seconds."
     )
 
     class Config:

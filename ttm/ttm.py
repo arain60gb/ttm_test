@@ -34,7 +34,7 @@ class MusicGenerationService(AIModelService):
         self.last_reset_weights_block = self.current_block
         self.filtered_axon = []
         self.combinations = []
-        self.duration = 755  # 755 tokens = 15 seconds music
+        self.duration = None  # 755 tokens = 15 seconds music
         self.lock = asyncio.Lock()
 
     def load_prompts(self):
@@ -74,21 +74,29 @@ class MusicGenerationService(AIModelService):
             # Get filtered axons and query the network
             try:
                 filtered_axons = self.get_filtered_axons_from_combinations()
+                responses = self.query_network(filtered_axons, g_prompt)
             except Exception as e:
                 bt.logging.error(f"querying the network is giving the error: {e}")
-            responses = self.query_network(filtered_axons, g_prompt)
             self.process_responses(filtered_axons, responses, g_prompt)
 
         except Exception as e:
             bt.logging.error(f"An error occurred in main loop logic: {e}")
 
-    def query_network(self, filtered_axons, prompt):
+    def query_network(self, filtered_axons, prompt, duration=15):
+        # Network querying logic
+        if duration == 15:
+            self.duration = 755
+            self.time_out = 100
+        elif duration == 30:
+            self.duration = 1510
+            self.time_out = 200
+
         """Queries the network with filtered axons and prompt."""
         responses = self.dendrite.query(
             filtered_axons,
             MusicGeneration(text_input=prompt, duration=self.duration),
             deserialize=True,
-            timeout=140,
+            timeout=self.time_out,
         )
         return responses
 
