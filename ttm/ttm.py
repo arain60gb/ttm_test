@@ -12,7 +12,7 @@ import random
 import torch
 import wandb
 import wave
-import ttm
+import ttm.ttm as ttmm
 import sys
 import os
 
@@ -191,10 +191,10 @@ class MusicGenerationService(AIModelService):
         uids = self.metagraph.uids.tolist()
         queryable_uids = (self.metagraph.total_stake >= 0)
         # Remove the weights of miners that are not queryable.
-        queryable_uids = queryable_uids * torch.Tensor([self.metagraph.neurons[uid].axon_info.ip != '0.0.0.0' for uid in uids])
+        queryable_uids = torch.Tensor(queryable_uids) * torch.Tensor([self.metagraph.neurons[uid].axon_info.ip != '0.0.0.0' for uid in uids])
         queryable_uid = queryable_uids * torch.Tensor([
-            any(self.metagraph.neurons[uid].axon_info.ip == ip for ip in ttm.BLACKLISTED_IPS) or
-            any(self.metagraph.neurons[uid].axon_info.ip.startswith(prefix) for prefix in ttm.BLACKLISTED_IPS_SEG)
+            any(self.metagraph.neurons[uid].axon_info.ip == ip for ip in ttmm.BLACKLISTED_IPS) or
+            any(self.metagraph.neurons[uid].axon_info.ip.startswith(prefix) for prefix in ttmm.BLACKLISTED_IPS_SEG)
             for uid in uids
         ])
         active_miners = torch.sum(queryable_uids)
@@ -228,5 +228,5 @@ class MusicGenerationService(AIModelService):
             subset = filtered_uids[:subset_length]
             self.combinations.append(subset)
             filtered_uids = filtered_uids[subset_length:]
-        return self.combinations
+        return filtered_uids #self.combinations
 
