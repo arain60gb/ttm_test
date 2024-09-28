@@ -62,28 +62,21 @@ class MusicGenerationService(AIModelService):
             g_prompt = self.load_prompts()
             g_prompt = random.choice(g_prompt)  # Choose a random prompt
             g_prompt = self.convert_numeric_values(g_prompt)
-            print(f"____________________________TTM-Prompt selected____________________________:")
             # Ensure prompt length does not exceed 256 characters
-            print(f"____________________________TTM-Prompt length____________________________: {len(g_prompt)}")
-            print(f"____________________________TTM-Prompt length____________________________: {type(len(g_prompt))}")
-            print(f"____________________________ TTM-Prompt ____________________________: {g_prompt}")
+            while len(g_prompt) > 256:
+                print(f"____________________________ inside the promt ____________________________:")
+                bt.logging.error(f'The length of current Prompt is greater than 256. Skipping current prompt.')
+                g_prompt = random.choice(g_prompt)
+                print(f"____________________________TTM-Prompt randomly selected____________________________:")
+                g_prompt = self.convert_numeric_values(g_prompt)
 
-            try:
-                while len(g_prompt) > 256:
-                    print(f"____________________________ inside the promt ____________________________:")
-                    bt.logging.error(f'The length of current Prompt is greater than 256. Skipping current prompt.')
-                    g_prompt = random.choice(g_prompt)
-                    print(f"____________________________TTM-Prompt randomly selected____________________________:")
-                    g_prompt = self.convert_numeric_values(g_prompt)
-            except Exception as e:
-                bt.logging.error(f"while checking prompt length check: {e}")
-
-            print(f"____________________________ after while loop ____________________________:")
             # Get filtered axons and query the network
-            filtered_axons = self.get_filtered_axons_from_combinations()
-            print(f"____________________________ after get_filtered_axons_from_combinations loop ____________________________:")
-            responses = self.query_network(filtered_axons, g_prompt)
-            self.process_responses(filtered_axons, responses, g_prompt)
+            try:
+                filtered_axons = self.get_filtered_axons_from_combinations()
+                responses = self.query_network(filtered_axons, g_prompt)
+                self.process_responses(filtered_axons, responses, g_prompt)
+            except Exception as e:
+                bt.logging.error(f"querying the network is giving the error: {e}")
 
         except Exception as e:
             bt.logging.error(f"An error occurred in main loop logic: {e}")
