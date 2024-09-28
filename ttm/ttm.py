@@ -96,7 +96,7 @@ class MusicGenerationService(AIModelService):
             filtered_axons,
             MusicGeneration(text_input=prompt, duration=self.duration),
             deserialize=True,
-            timeout=self.time_out,
+            timeout=100,
         )
         return responses
 
