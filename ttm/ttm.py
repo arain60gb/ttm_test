@@ -64,6 +64,8 @@ class MusicGenerationService(AIModelService):
             g_prompt = self.convert_numeric_values(g_prompt)
             print(f"____________________________TTM-Prompt selected____________________________:")
             # Ensure prompt length does not exceed 256 characters
+            print(f"____________________________TTM-Prompt length____________________________: {len(g_prompt)}")
+            print(f"____________________________ TTM-Prompt ____________________________: {g_prompt}")
             while len(g_prompt) > 256:
                 print(f"____________________________ inside the promt ____________________________:")
                 bt.logging.error(f'The length of current Prompt is greater than 256. Skipping current prompt.')
