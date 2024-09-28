@@ -1,7 +1,3 @@
-# Import all submodules.
-from . import protocol
-from . import globals
-
 __version__ = "3.3.6"
 version_split = __version__.split(".")
 __spec_version__ = (
