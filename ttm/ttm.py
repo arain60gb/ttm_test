@@ -73,8 +73,9 @@ class MusicGenerationService(AIModelService):
 
             # Get filtered axons and query the network
             filtered_axons = self.get_filtered_axons_from_combinations()
+            print(f"____________________________ filtered axons {filtered_axons} ____________________________:")
             responses = self.query_network(filtered_axons, g_prompt)
-            print(f"____________________________ inside the quering network {responses} ____________________________:")
+            print(f"____________________________ quering network {responses} ____________________________:")
             try:
                 self.process_responses(filtered_axons, responses, g_prompt)
             except Exception as e:
@@ -97,15 +98,12 @@ class MusicGenerationService(AIModelService):
             filtered_axons,
             MusicGeneration(text_input=prompt, duration=self.duration),
             deserialize=True,
-            timeout=100,
+            timeout=200,
         )
         return responses
 
     def process_responses(self, filtered_axons, responses, prompt):
         """Processes responses received from the network."""
-        print(f"____________________________ inside the process response {filtered_axons} ____________________________:")
-        print(f"____________________________ inside the process response ye khali aa raha hai {responses} ____________________________:")
-        print(f"____________________________ inside the process response {prompt} ____________________________:")
         for axon, response in zip(filtered_axons, responses):
             if response is not None and isinstance(response, MusicGeneration):
                 self.process_response(axon, response, prompt)
