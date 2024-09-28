@@ -177,12 +177,19 @@ class MusicGenerationService(AIModelService):
             return 0.0
 
     def get_filtered_axons_from_combinations(self):
-        """Gets filtered axons from the combinations."""
         if not self.combinations:
             self.get_filtered_axons()
 
-        current_combination = self.combinations.pop(0)
-        filtered_axons = [self.metagraph.axons[i] for i in current_combination]
+        if self.combinations:
+            current_combination = self.combinations.pop(0)
+            bt.logging.info(f"Current Combination for TTM: {current_combination}")
+            filtered_axons = [self.metagraph.axons[i] for i in current_combination]
+        else:
+            self.get_filtered_axons()
+            current_combination = self.combinations.pop(0)
+            bt.logging.info(f"Current Combination for TTM: {current_combination}")
+            filtered_axons = [self.metagraph.axons[i] for i in current_combination]
+
         return filtered_axons
 
     def get_filtered_axons(self):
