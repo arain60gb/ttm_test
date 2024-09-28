@@ -65,6 +65,7 @@ class MusicGenerationService(AIModelService):
             print(f"____________________________TTM-Prompt selected____________________________:")
             # Ensure prompt length does not exceed 256 characters
             while len(g_prompt) > 256:
+                print(f"____________________________ inside the promt ____________________________:")
                 bt.logging.error(f'The length of current Prompt is greater than 256. Skipping current prompt.')
                 g_prompt = random.choice(g_prompt)
                 print(f"____________________________TTM-Prompt randomly selected____________________________:")
