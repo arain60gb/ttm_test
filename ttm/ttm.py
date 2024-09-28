@@ -81,6 +81,12 @@ class MusicGenerationService(AIModelService):
             except Exception as e:
                 bt.logging.error(f"getting an error in processing response: {e}")
 
+            if self.last_reset_weights_block + 50 < self.current_block:
+                bt.logging.info(f"Resetting weights for validators and nodes without IPs")
+                self.last_reset_weights_block = self.current_block        
+                # set all nodes without ips set to 0
+                self.scores = self.scores * torch.Tensor([self.metagraph.neurons[uid].axon_info.ip != '0.0.0.0' for uid in self.metagraph.uids])
+
         except Exception as e:
             bt.logging.error(f"An error occurred in main loop logic: {e}")
 
@@ -193,6 +199,8 @@ class MusicGenerationService(AIModelService):
             current_combination = self.combinations.pop(0)
             bt.logging.info(f"Current Combination for TTM: [68, 69]")
             filtered_axons = [self.metagraph.axons[i] for i in [68, 69]]
+
+            print(f"____________________________ filtered axons +++++++++++++++++++++++++++++++++++ {filtered_axons} ____________________________:")
 
         return filtered_axons
 
