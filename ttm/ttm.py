@@ -72,7 +72,6 @@ class MusicGenerationService(AIModelService):
             # Get filtered axons and query the network
             filtered_axons = self.get_filtered_axons_from_combinations()
             responses = self.query_network(filtered_axons, g_prompt)
-            print(f"____________________________ quering network {responses} ____________________________:")
             try:
                 self.process_responses(filtered_axons, responses, g_prompt)
             except Exception as e:
