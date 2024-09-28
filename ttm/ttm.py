@@ -76,8 +76,9 @@ class MusicGenerationService(AIModelService):
                     print(f"____________________________TTM-Prompt randomly selected____________________________:")
                     g_prompt = self.convert_numeric_values(g_prompt)
             except Exception as e:
-                bt.logging.error(f"An error occurred while checking prompt length check: {e}")
+                bt.logging.error(f"while checking prompt length check: {e}")
 
+            print(f"____________________________ after while loop ____________________________:")
             # Get filtered axons and query the network
             filtered_axons = self.get_filtered_axons_from_combinations()
             bt.logging.info(f"______________TTM-Prompt______________: {g_prompt}")
