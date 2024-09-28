@@ -73,10 +73,10 @@ class MusicGenerationService(AIModelService):
             # Get filtered axons and query the network
             try:
                 filtered_axons = self.get_filtered_axons_from_combinations()
-                responses = self.query_network(filtered_axons, g_prompt)
-                self.process_responses(filtered_axons, responses, g_prompt)
             except Exception as e:
                 bt.logging.error(f"querying the network is giving the error: {e}")
+            responses = self.query_network(filtered_axons, g_prompt)
+            self.process_responses(filtered_axons, responses, g_prompt)
 
         except Exception as e:
             bt.logging.error(f"An error occurred in main loop logic: {e}")
